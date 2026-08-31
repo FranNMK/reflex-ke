@@ -57,7 +57,7 @@ export default function RiderPage() {
           { facingMode: "environment" },
           { fps: 10, qrbox: 220 },
           (decodedText: string) => {
-            setConfirmCode((prev) => ({ ...prev, [scanningFor]: decodedText }));
+            setConfirmCode((prev) => ({ ...prev, [scanningFor!]: decodedText }));
             scanner.stop().catch(() => {});
             setScanningFor(null);
           },
