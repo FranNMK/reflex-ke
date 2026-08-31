@@ -1,7 +1,6 @@
-// In production (Railway), VITE_API_URL is the full backend URL e.g. https://reflex-backend.up.railway.app
-// In local dev, /api is proxied to localhost:8000 by vite.config.ts
-declare const __API_URL__: string;
-const BASE = typeof __API_URL__ !== "undefined" ? __API_URL__ : "/api";
+// In production (Railway), set VITE_API_URL=https://your-backend.up.railway.app
+// In local dev this is undefined, so /api is used (proxied by vite.config.ts)
+const BASE = import.meta.env.VITE_API_URL ?? "/api";
 
 function getToken(): string | null {
   return localStorage.getItem("reflex_token");
