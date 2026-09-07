@@ -1,6 +1,13 @@
-// In production (Railway), set VITE_API_URL=https://your-backend.up.railway.app
-// In local dev this is undefined, so /api is used (proxied by vite.config.ts)
-const BASE = import.meta.env.VITE_API_URL ?? "/api";
+// In production (Railway), set VITE_API_URL to your backend Railway domain.
+// Railway's UI strips "https://" from variable values, so we normalise it here.
+// e.g. "reflex-ke-backend.up.railway.app" → "https://reflex-ke-backend.up.railway.app"
+function buildBase(): string {
+  const raw = import.meta.env.VITE_API_URL;
+  if (!raw) return "/api"; // local dev — Vite proxy handles it
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  return `https://${raw}`;
+}
+const BASE = buildBase();
 
 function getToken(): string | null {
   return localStorage.getItem("reflex_token");
