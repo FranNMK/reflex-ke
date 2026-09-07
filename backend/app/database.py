@@ -1,3 +1,7 @@
+import pymysql  # noqa: F401 — explicit import forces SQLAlchemy to find the pymysql dialect
+                # without this, SQLAlchemy falls back to MySQLdb which is not installed
+pymysql.install_as_MySQLdb()
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
@@ -7,9 +11,8 @@ from app.models.models import Base
 
 settings = get_settings()
 
-# Build engine kwargs — add SSL for TiDB Cloud (mysql+pymysql with ssl params in URL)
-# The ?ssl_verify_cert=true&ssl_verify_identity=true in the URL handles TiDB Cloud TLS.
-# connect_args passes the system CA bundle so the server certificate is trusted.
+# Build engine kwargs — add SSL for TiDB Cloud.
+# connect_args passes the system CA bundle so the TiDB server certificate is trusted.
 _connect_args: dict = {}
 if settings.DATABASE_URL.startswith("mysql"):
     import ssl
