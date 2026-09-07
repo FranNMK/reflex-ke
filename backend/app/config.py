@@ -8,6 +8,16 @@ from pathlib import Path
 _ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 
 
+def _normalise_origin(origin: str) -> str:
+    """Railway's UI strips https:// from variable values. Re-add it if missing."""
+    o = origin.strip()
+    if not o:
+        return o
+    if o.startswith("http://") or o.startswith("https://"):
+        return o
+    return f"https://{o}"
+
+
 class Settings(BaseSettings):
     DATABASE_URL: str
     JWT_SECRET: str
@@ -16,7 +26,7 @@ class Settings(BaseSettings):
 
     @property
     def allowed_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
+        return [_normalise_origin(o) for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     model_config = {
         "env_file": str(_ENV_FILE),

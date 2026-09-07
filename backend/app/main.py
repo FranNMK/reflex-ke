@@ -15,12 +15,16 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# CORS must be the outermost middleware so it attaches Allow-Origin even on
+# error responses (4xx/5xx). Without this, the browser sees a CORS error
+# instead of the real error message.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.include_router(auth_router.router)
