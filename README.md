@@ -26,7 +26,7 @@ Three accounts are seeded in production — one per role. Use these to log in an
 |---|---|---|---|
 | **Retailer Staff** | `0700000001` | `Retailer@123` | Log deliveries, view status, manage stock |
 | **Dispatcher** | `0700000002` | `Dispatch@123` | Assign riders, manage rider accounts |
-| **Rider** | `0700000003` | `Rider@12345` | View assigned deliveries, pick up, scan proof |
+| **Rider** | `0700000003` | `rider-3117` | View assigned deliveries, pick up, scan proof |
 
 > Log in at https://reflex-ke-frontend.up.railway.app/login
 
