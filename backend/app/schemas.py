@@ -38,6 +38,12 @@ class RiderCreateRequest(BaseModel):
     phone: str
 
 
+class RiderUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    reset_password: bool = False
+
+
 class RiderCreatedOut(UserOut):
     temp_password: str
 
