@@ -158,6 +158,9 @@ Created exactly once per delivery, at the moment the rider successfully scans th
 | PATCH | `/deliveries/{id}/status` | rider | Update to picked_up |
 | POST | `/deliveries/{id}/confirm` | rider | Submit scanned code, trigger delivered |
 | GET | `/users?role=rider` | dispatcher | List available riders for dropdown |
+| POST | `/users/riders` | dispatcher | Create a rider account, returns one-time temp password |
+| PATCH | `/users/riders/{id}` | dispatcher | Update rider name/phone; or reset password (`reset_password: true`) |
+| DELETE | `/users/riders/{id}` | dispatcher | Delete rider (blocked if rider has active deliveries) |
 
 ---
 
@@ -215,3 +218,6 @@ The following are explicitly not part of this build:
 |---------|------|
 | System Design Flow | [`design.png`](./design.png) |
 | Entity-Relationship Diagram | [`erd.png`](./erd.png) |
+| Riders Add Flow | [`ridersdesign.png`](./ridersdesign.png) |
+| Dispatcher–Rider Tab Flow | [`DispercherRiderFlow.png`](./DispercherRiderFlow.png) |
+| Rider CRUD Full Flow | [`DisRiderCRUD.png`](./DisRiderCRUD.png) |
