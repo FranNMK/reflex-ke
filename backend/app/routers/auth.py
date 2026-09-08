@@ -19,23 +19,25 @@ _SEED_USERS = [
 
 @router.post("/reseed", tags=["auth"], status_code=200)
 def reseed(db: Session = Depends(get_db)):
-    """Delete and recreate the three test users with fresh bcrypt hashes.
+    """Update passwords for the three test users with fresh bcrypt hashes.
+    Does NOT delete — just updates hashed_password in place to avoid FK issues.
     REMOVE THIS ENDPOINT once login is confirmed working in production."""
     results = []
     for u in _SEED_USERS:
         existing = db.query(User).filter(User.phone == u["phone"]).first()
         if existing:
-            db.delete(existing)
-            db.flush()
-        user = User(
-            name=u["name"],
-            phone=u["phone"],
-            role=u["role"],
-            hashed_password=hash_password(u["password"]),
-        )
-        db.add(user)
-        db.flush()
-        results.append({"phone": u["phone"], "role": u["role"].value, "action": "recreated"})
+            # Update password hash in-place — avoids FK constraint issues
+            existing.hashed_password = hash_password(u["password"])
+            results.append({"phone": u["phone"], "role": u["role"].value, "action": "updated"})
+        else:
+            user = User(
+                name=u["name"],
+                phone=u["phone"],
+                role=u["role"],
+                hashed_password=hash_password(u["password"]),
+            )
+            db.add(user)
+            results.append({"phone": u["phone"], "role": u["role"].value, "action": "created"})
     db.commit()
     return {"seeded": results}
 # ---------------------------------------------------------------------------
