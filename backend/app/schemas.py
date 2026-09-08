@@ -31,6 +31,17 @@ class UserOut(BaseModel):
     role: UserRole
 
 
+# ── Users ────────────────────────────────────────────────────────────────────
+
+class RiderCreateRequest(BaseModel):
+    name: str
+    phone: str
+
+
+class RiderCreatedOut(UserOut):
+    temp_password: str
+
+
 # ── Products ──────────────────────────────────────────────────────────────────
 
 class ProductCreate(BaseModel):
