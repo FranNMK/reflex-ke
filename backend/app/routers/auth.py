@@ -22,24 +22,27 @@ def reseed(db: Session = Depends(get_db)):
     """Update passwords for the three test users with fresh bcrypt hashes.
     Does NOT delete — just updates hashed_password in place to avoid FK issues.
     REMOVE THIS ENDPOINT once login is confirmed working in production."""
-    results = []
-    for u in _SEED_USERS:
-        existing = db.query(User).filter(User.phone == u["phone"]).first()
-        if existing:
-            # Update password hash in-place — avoids FK constraint issues
-            existing.hashed_password = hash_password(u["password"])
-            results.append({"phone": u["phone"], "role": u["role"].value, "action": "updated"})
-        else:
-            user = User(
-                name=u["name"],
-                phone=u["phone"],
-                role=u["role"],
-                hashed_password=hash_password(u["password"]),
-            )
-            db.add(user)
-            results.append({"phone": u["phone"], "role": u["role"].value, "action": "created"})
-    db.commit()
-    return {"seeded": results}
+    try:
+        results = []
+        for u in _SEED_USERS:
+            existing = db.query(User).filter(User.phone == u["phone"]).first()
+            if existing:
+                existing.hashed_password = hash_password(u["password"])
+                results.append({"phone": u["phone"], "role": u["role"].value, "action": "updated"})
+            else:
+                user = User(
+                    name=u["name"],
+                    phone=u["phone"],
+                    role=u["role"],
+                    hashed_password=hash_password(u["password"]),
+                )
+                db.add(user)
+                results.append({"phone": u["phone"], "role": u["role"].value, "action": "created"})
+        db.commit()
+        return {"seeded": results}
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(exc))
 # ---------------------------------------------------------------------------
 
 
