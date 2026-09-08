@@ -32,6 +32,7 @@ export default function DispatcherPage() {
   const [addingRider, setAddingRider] = useState(false);
   const [addRiderError, setAddRiderError] = useState<string | null>(null);
   const [addRiderSuccess, setAddRiderSuccess] = useState<{ name: string; temp_password: string } | null>(null);
+  const [addRiderCopied, setAddRiderCopied] = useState(false);
 
   // ── Edit/Delete state ──────────────────────────────────────────────────────
   const [editingRiderId, setEditingRiderId] = useState<number | null>(null);
@@ -95,6 +96,7 @@ export default function DispatcherPage() {
     e.preventDefault();
     setAddRiderError(null);
     setAddRiderSuccess(null);
+    setAddRiderCopied(false);
     setAddingRider(true);
     try {
       const result = await api.post<RiderCreated>("/users/riders", {
@@ -354,9 +356,20 @@ export default function DispatcherPage() {
               {addRiderSuccess && (
                 <div style={styles.successBox}>
                   <strong>✓ Rider added: {addRiderSuccess.name}</strong>
-                  <div style={{ marginTop: 6 }}>
+                  <div style={{ marginTop: 6, display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                     Share this password with the rider:
                     <span style={styles.tempPassword}>{addRiderSuccess.temp_password}</span>
+                    <button
+                      style={styles.copyBtn}
+                      onClick={() => {
+                        navigator.clipboard.writeText(addRiderSuccess.temp_password).then(() => {
+                          setAddRiderCopied(true);
+                          setTimeout(() => setAddRiderCopied(false), 2000);
+                        });
+                      }}
+                    >
+                      {addRiderCopied ? "Copied ✓" : "Copy"}
+                    </button>
                   </div>
                   <div style={{ fontSize: 11, marginTop: 6, color: "#166534", opacity: 0.8 }}>
                     This password is shown once. The rider logs in with their phone number and this password.
